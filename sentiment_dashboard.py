@@ -82,7 +82,8 @@ model, tokenizer = load_roberta_model()
 def run_roberta(df):
     results = []
     for _, row in tqdm(df.iterrows(), total=len(df)):
-        encoded = tokenizer(row['Text'], return_tensors='pt', truncation=True)
+        encoded = tokenizer(row['Text'], return_tensors='pt', truncation=True, padding=True)
+        encoded.pop("token_type_ids", None)  # Remove unsupported key
         with torch.no_grad():
             output = model(**encoded)
         scores = softmax(output[0][0].numpy())
